@@ -1,11 +1,3 @@
-const addTwoNumbers = (
-  a: number,
-  b: number,
-  showResult: boolean,
-  phrase: string
-) => {
-  console.log(phrase);
-  if (showResult) console.log(a + b);
-};
+const person: { name: string; age: number } = { name: "James", age: 29 };
 
-addTwoNumbers(9, 4.5, true, "hey!");
+console.log(person);
