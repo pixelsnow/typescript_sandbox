@@ -1,12 +1,18 @@
-const ADMIN = 0;
+/* const ADMIN = 0;
 const READ_ONLY = 1;
-const AUTHOR = 2;
+const AUTHOR = 2; */
+
+enum Role {
+  ADMIN = "ADMIN",
+  READ_ONLY = "READ_ONLY",
+  AUTHOR = "AUTHOR",
+}
 
 const person = {
   name: "James",
   age: 29,
   hobbies: ["sleeping", "sports"],
-  role: "ADMIN",
+  role: Role.ADMIN,
 };
 
 console.log(person);
