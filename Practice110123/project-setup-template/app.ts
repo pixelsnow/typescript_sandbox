@@ -1,5 +1,11 @@
-const addTwoNumbers = (a: number, b: number) => {
-  return a + b;
+const addTwoNumbers = (
+  a: number,
+  b: number,
+  showResult: boolean,
+  phrase: string
+) => {
+  console.log(phrase);
+  if (showResult) console.log(a + b);
 };
 
-console.log(addTwoNumbers("9", 4.5));
+addTwoNumbers(9, 4.5, true, "hey!");
