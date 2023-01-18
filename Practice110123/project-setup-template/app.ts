@@ -38,3 +38,38 @@ const product: {
 };
 
 product.hobbies.forEach((hobby) => console.log(hobby.toUpperCase()));
+
+type Uid = string | number;
+
+const logDetails = (uid: Uid, item: string) => {
+  console.log(`${item} has a uid of ${uid}`);
+};
+
+type User = { name: string; uid: Uid };
+
+const greet = (user: User) => {
+  console.log(`${user.name} says hello`);
+};
+
+logDetails(4, "item");
+
+greet({ name: "james", uid: 5 });
+
+function voidTest(a: string): void {
+  console.log(a);
+  //return true;
+}
+
+function sendRequest(data: string, cb: (response: any) => void) {
+  // ... sending a request with "data"
+  return cb({ data: "Hi there!" });
+}
+sendRequest("Send this!", (response) => {
+  console.log(response);
+  return true;
+});
+
+// Exclamation mark means it's not NULL
+const button = document.querySelector("button")!;
+
+button.addEventListener("click", () => console.log("button clicked"));
