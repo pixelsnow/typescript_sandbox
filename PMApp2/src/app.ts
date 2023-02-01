@@ -41,8 +41,7 @@ function validate(validatableInput: Validatable) {
   return isValid;
 }
 
-// Decorator - experimental feature
-/* First two params: target: any, methodName: string */
+// decorator is a function
 function autobind(_: any, _2: string, descriptor: PropertyDescriptor) {
   const originalMethod = descriptor.value;
   const adjDescriptor: PropertyDescriptor = {
@@ -53,47 +52,6 @@ function autobind(_: any, _2: string, descriptor: PropertyDescriptor) {
     },
   };
   return adjDescriptor;
-}
-
-class ProjectList {
-  templateElement: HTMLTemplateElement;
-  hostElement: HTMLDivElement;
-  element: HTMLElement;
-  assignedProjects: any[];
-
-  constructor(private type: "active" | "finished") {
-    this.templateElement = document.querySelector(
-      "#project-list"
-    )! as HTMLTemplateElement;
-
-    this.hostElement = document.querySelector("#app")! as HTMLDivElement;
-    this.assignedProjects = [];
-    const importedNode = document.importNode(
-      this.templateElement.content,
-      true
-    );
-    this.element = importedNode.firstElementChild as HTMLElement;
-    this.element.id = `${this.type}-projects`;
-
-    projectState.addListener((projects: any[]) => {
-      this.assignedProjects = projects;
-      this.renderProjects();
-    });
-
-    this.attach();
-    this.renderContent();
-  }
-
-  private attach() {
-    this.hostElement.insertAdjacentElement("afterbegin", this.element);
-  }
-
-  private renderContent() {
-    const listId = `${this.type}-projects-list`;
-    this.element.querySelector("ul")!.id = listId;
-    this.element.querySelector("h2")!.textContent =
-      this.type.toUpperCase() + " PROJECTS";
-  }
 }
 
 class ProjectState {
@@ -110,17 +68,15 @@ class ProjectState {
     this.instance = new ProjectState();
     return this.instance;
   }
-
   addListener(listenerFn: Function) {
     this.listeners.push(listenerFn);
   }
-
-  addProject(title: String, description: string, numOfPeople: number) {
+  addProject(title: string, description: string, numofpeople: number) {
     const newProject = {
       id: Math.random.toString(),
       title: title,
       description: description,
-      people: numOfPeople,
+      people: numofpeople,
     };
     this.projects.push(newProject);
     for (const listenerFn of this.listeners) {
@@ -128,9 +84,55 @@ class ProjectState {
     }
   }
 }
-
 const projectState = ProjectState.getInstance();
-const prjList = new ProjectList("finished");
+
+class ProjectList {
+  templateElement: HTMLTemplateElement;
+  hostElement: HTMLDivElement;
+  element: HTMLElement;
+  assignedProjects: any[];
+
+  constructor(private type: "active" | "finished") {
+    this.templateElement = document.getElementById(
+      "project-list"
+    )! as HTMLTemplateElement;
+    this.hostElement = document.getElementById("app")! as HTMLDivElement;
+    this.assignedProjects = [];
+    const importedNode = document.importNode(
+      this.templateElement.content,
+      true
+    );
+    this.element = importedNode.firstElementChild as HTMLElement;
+    this.element.id = `${this.type}-projects`;
+
+    projectState.addListener((projects: any[]) => {
+      this.assignedProjects = projects;
+      this.renderProjects();
+    });
+
+    this.attach();
+    this.renderContent();
+  }
+  private renderProjects() {
+    const listEl = document.getElementById(
+      `${this.type}-projects-list`
+    )! as HTMLUListElement;
+    for (const prjItem of this.assignedProjects) {
+      const listItem = document.createElement("li");
+      listItem.textContent = prjItem.title;
+      listEl.appendChild(listItem);
+    }
+  }
+  private renderContent() {
+    const listId = `${this.type}-projects-list`;
+    this.element.querySelector("ul")!.id = listId;
+    this.element.querySelector("h2")!.textContent =
+      this.type.toUpperCase() + "PROJECTS";
+  }
+  private attach() {
+    this.hostElement.insertAdjacentElement("beforeend", this.element);
+  }
+}
 
 class ProjectInput {
   templateElement: HTMLTemplateElement;
@@ -142,11 +144,11 @@ class ProjectInput {
   peopleInputElement: HTMLInputElement;
 
   constructor() {
-    this.templateElement = document.querySelector(
-      "#project-input"
+    this.templateElement = document.getElementById(
+      "project-input"
     )! as HTMLTemplateElement;
-    // Second way to do the same thing
-    this.hostElement = <HTMLDivElement>document.querySelector("#app");
+    this.hostElement = document.getElementById("app")! as HTMLDivElement;
+
     const importedNode = document.importNode(
       this.templateElement.content,
       true
@@ -162,7 +164,6 @@ class ProjectInput {
     this.peopleInputElement = this.element.querySelector(
       "#people"
     ) as HTMLInputElement;
-
     this.attach();
     this.configure();
   }
@@ -170,7 +171,7 @@ class ProjectInput {
   private gatherUserInput(): [string, string, number] | void {
     const enteredTitle = this.titleInputElement.value;
     const enteredDescription = this.descriptionInputElement.value;
-    const enteredPeople = +this.peopleInputElement.value;
+    const enteredPeople = this.peopleInputElement.value;
 
     const titleValidatable: Validatable = {
       value: enteredTitle,
@@ -184,10 +185,10 @@ class ProjectInput {
     };
 
     const peopleValidatable: Validatable = {
-      value: enteredPeople,
+      value: +enteredPeople,
       required: true,
       min: 1,
-      max: 5,
+      max: 10,
     };
 
     if (
@@ -195,7 +196,7 @@ class ProjectInput {
       !validate(descriptionValidatable) ||
       !validate(peopleValidatable)
     ) {
-      alert("invalid input");
+      alert("Invalid input, please try again");
     } else {
       return [enteredTitle, enteredDescription, +enteredPeople];
     }
@@ -213,13 +214,12 @@ class ProjectInput {
     const userInput = this.gatherUserInput();
     if (Array.isArray(userInput)) {
       const [title, desc, people] = userInput;
-      console.log(title, desc, people);
+      projectState.addProject(title, desc, people);
       this.clearInputs();
     }
   }
 
   private configure() {
-    // Instead on binding we could just use an arrow function
     this.element.addEventListener("submit", this.submitHandler);
   }
 
@@ -227,5 +227,6 @@ class ProjectInput {
     this.hostElement.insertAdjacentElement("afterbegin", this.element);
   }
 }
-
 const prjInput = new ProjectInput();
+const activePrjList = new ProjectList("active");
+const finishedPrjList = new ProjectList("finished");
