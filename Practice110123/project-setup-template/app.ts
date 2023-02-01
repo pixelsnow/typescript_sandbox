@@ -2,7 +2,7 @@
 const READ_ONLY = 1;
 const AUTHOR = 2; */
 
-enum Role {
+/* enum Role {
   ADMIN = "ADMIN",
   READ_ONLY = "READ_ONLY",
   AUTHOR = "AUTHOR",
@@ -72,4 +72,26 @@ sendRequest("Send this!", (response) => {
 // Exclamation mark means it's not NULL
 const button = document.querySelector("button")!;
 
-button.addEventListener("click", () => console.log("button clicked"));
+button.addEventListener("click", () => console.log("button clicked")); */
+
+// GENERICS
+
+type numArray = Array<number>;
+type strArray = Array<string>;
+
+/* const last = (arr: Array<any>) => {
+  return arr[arr.length - 1];
+}; */
+
+const last = <T>(arr: T[]) => {
+  return arr[arr.length - 1];
+};
+
+const l1 = last<number>([1, 2, 3]);
+console.log(l1);
+
+const l2 = last(["a", "b", "c"]);
+console.log(l2);
+
+const l3 = last<string>(["a", "b", "c"]);
+console.log(l3);
