@@ -11,8 +11,6 @@ type GoogleGeoResponse = {
   status: "OK" | "ZERO_RESULTS";
 };
 
-declare let google: any;
-
 function searchLocationHandler(e: Event) {
   e.preventDefault();
   const location = address.value;
@@ -32,7 +30,7 @@ function searchLocationHandler(e: Event) {
         document.getElementById("map") as HTMLElement,
         {
           center: coordinates,
-          zoom: 12,
+          zoom: 11,
         }
       );
       new google.maps.Marker({ position: coordinates, map: map });
