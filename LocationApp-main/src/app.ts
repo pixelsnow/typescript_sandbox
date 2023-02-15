@@ -19,7 +19,7 @@ function searchLocationHandler(e: Event) {
     .get<GoogleGeoResponse>(
       `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURI(
         location
-      )}&key=AIzaSyAuyPWb0vgdZ3j5PZ6ptox5pFoEUMoYMao`
+      )}&key={KEY}`
     )
     .then((response) => {
       if (response.data.status !== "OK") {
